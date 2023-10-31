@@ -1,6 +1,7 @@
 package turniplabs.industry.items
 
 import net.minecraft.core.item.Item
+import net.minecraft.core.item.ItemFoodStackable
 import net.minecraft.core.item.ItemPlaceable
 import turniplabs.halplibe.helper.ItemHelper
 import turniplabs.industry.Industry2
@@ -42,7 +43,7 @@ object IndustryItems {
     val steelPlate: Item = ItemHelper.createItem(Industry2.MOD_ID, Item(nextItemID()), "plate.steel", "plate_steel.png")
 
     // Cables
-    val itemCopperCable: Item? = ItemHelper.createItem(
+    val itemCopperCable: Item = ItemHelper.createItem(
         Industry2.MOD_ID,
         ItemPlaceable("cable.copper", nextItemID(), IndustryBlocks.copperCable),
         "cable.copper",
@@ -96,27 +97,28 @@ object IndustryItems {
     // Tools
     val hammer: Item = ItemHelper.createItem(Industry2.MOD_ID, ItemHammer(nextItemID()), "tool.hammer", "hammer.png")
     val cutter: Item = ItemHelper.createItem(Industry2.MOD_ID, ItemCutter(nextItemID()), "tool.cutter", "cutter.png")
+    val wrench: Item = ItemHelper.createItem(Industry2.MOD_ID, ItemWrench(nextItemID()), "tool.wrench", "wrench.png")
 
     val batteryRedstone: Item = ItemHelper.createItem(
         Industry2.MOD_ID,
         ItemBatteryRedstone(nextItemID()),
         "tool.battery.redstone"
-    )
+    ).withTags(IndustryTags.PREVENT_ITEM_RECYCLING)
     val batteryAdvanced: Item = ItemHelper.createItem(
         Industry2.MOD_ID,
         ItemBatteryAdvanced(nextItemID()),
         "tool.battery.advanced",
-    )
+    ).withTags(IndustryTags.PREVENT_ITEM_RECYCLING)
     val batteryCrystal: Item = ItemHelper.createItem(
         Industry2.MOD_ID,
         ItemBatteryCrystal(nextItemID()),
         "tool.battery.crystal",
-    )
+    ).withTags(IndustryTags.PREVENT_ITEM_RECYCLING)
     val batteryLapis: Item = ItemHelper.createItem(
         Industry2.MOD_ID,
         ItemBatteryLapis(nextItemID()),
         "tool.battery.lapis",
-    )
+    ).withTags(IndustryTags.PREVENT_ITEM_RECYCLING)
 
     val treeTap: Item = ItemHelper.createItem(Industry2.MOD_ID, ItemTap(nextItemID()), "tool.tap", "tree_tap.png")
 
@@ -124,6 +126,12 @@ object IndustryItems {
     val waterCell: Item = ItemHelper.createItem(Industry2.MOD_ID, Item(nextItemID()), "cell.water", "cell_water.png")
     val lavaCell: Item = ItemHelper.createItem(Industry2.MOD_ID, Item(nextItemID()), "cell.lava", "cell_lava.png")
     val uraniumCell: Item = ItemHelper.createItem(Industry2.MOD_ID, Item(nextItemID()), "cell.uranium", "cell_uranium.png")
+
+    val canEmpty: Item = ItemHelper.createItem(Industry2.MOD_ID, Item(nextItemID()), "can.empty", "can.png")
+    val canFull: Item = ItemHelper.createItem(Industry2.MOD_ID,
+        ItemFoodStackable("can.full", nextItemID(), 2, false, 64),
+        "can.full",
+        "can_full.png")
 
     // Materials
     val resin: Item = ItemHelper.createItem(Industry2.MOD_ID, Item(nextItemID()), "ingredient.resin", "resin.png")

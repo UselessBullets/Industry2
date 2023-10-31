@@ -29,7 +29,7 @@ class Industry2: ModInitializer {
 
 	override fun onInitialize() {
 
-		// Do not touch this! It's a bug fix for class loading issues. Thanks Useless!
+		// Do not touch this! It's a bug fix for class loading issues. Thanks, Useless!
 		try {
 			Class.forName("net.minecraft.core.block.Block")
 			Class.forName("net.minecraft.core.item.Item")
@@ -41,7 +41,9 @@ class Industry2: ModInitializer {
 		IndustryBlocks.initializeBlocks()
 		IndustryRecipes.initializeRecipes()
 
-		Item.stick.hasTag(IndustryTags.PREVENT_ITEM_RECYCLING)
-		Item.ammoSnowball.hasTag(IndustryTags.PREVENT_ITEM_RECYCLING)
+		Item.ammoSnowball.withTags(IndustryTags.PREVENT_ITEM_RECYCLING)
+		Item.flint.withTags(IndustryTags.PREVENT_ITEM_RECYCLING)
+		Item.seedsWheat.withTags(IndustryTags.PREVENT_ITEM_RECYCLING)
+		Item.stick.withTags(IndustryTags.PREVENT_ITEM_RECYCLING)
 	}
 }

@@ -10,6 +10,7 @@ import turniplabs.industry.blocks.entities.TileEntityGenerator
 class GuiGenerator(inventory: InventoryPlayer?, private val tileEntity: TileEntityGenerator) :
     GuiContainer(ContainerGenerator(inventory, tileEntity))
 {
+
     override fun drawGuiContainerBackgroundLayer(f: Float) {
         val texture: Int = mc.renderEngine.getTexture("/assets/industry/gui/generator.png")
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f)

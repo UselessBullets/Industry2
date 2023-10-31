@@ -2,6 +2,7 @@ package turniplabs.industry.blocks.entities
 
 import sunsetsatellite.sunsetutils.util.Connection
 import sunsetsatellite.sunsetutils.util.Direction
+import turniplabs.industry.blocks.entities.solar.TileEntitySolarBase
 
 class TileEntitySolarGenerator() : TileEntitySolarBase(1) {
 

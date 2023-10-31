@@ -15,8 +15,36 @@ import turniplabs.industry.blocks.cables.BlockCableCopper
 import turniplabs.industry.blocks.cables.BlockCableGold
 import turniplabs.industry.blocks.cables.BlockCableTin
 import turniplabs.industry.blocks.entities.*
-import turniplabs.industry.blocks.machines.*
+import turniplabs.industry.blocks.entities.batbox.TileEntityBatboxHV
+import turniplabs.industry.blocks.entities.batbox.TileEntityBatboxLV
+import turniplabs.industry.blocks.entities.batbox.TileEntityBatboxMV
+import turniplabs.industry.blocks.entities.batbox.TileEntityBatboxSHV
+import turniplabs.industry.blocks.entities.lv.*
+import turniplabs.industry.blocks.entities.mv.TileEntityCompressorSingularity
+import turniplabs.industry.blocks.entities.mv.TileEntityCutterLaser
+import turniplabs.industry.blocks.entities.mv.TileEntityMaceratorRotary
+import turniplabs.industry.blocks.entities.solar.TileEntitySolarHV
+import turniplabs.industry.blocks.entities.solar.TileEntitySolarLV
+import turniplabs.industry.blocks.entities.solar.TileEntitySolarMV
+import turniplabs.industry.blocks.entities.solar.TileEntitySolarSHV
+import turniplabs.industry.blocks.machines.BlockGenerator
+import turniplabs.industry.blocks.machines.BlockGeothermalGenerator
+import turniplabs.industry.blocks.machines.BlockWatermill
+import turniplabs.industry.blocks.machines.BlockWindmill
+import turniplabs.industry.blocks.machines.batbox.BlockBatboxHV
+import turniplabs.industry.blocks.machines.batbox.BlockBatboxLV
+import turniplabs.industry.blocks.machines.batbox.BlockBatboxMV
+import turniplabs.industry.blocks.machines.batbox.BlockBatboxSHV
+import turniplabs.industry.blocks.machines.lv.*
+import turniplabs.industry.blocks.machines.mv.BlockCompressorSingularity
+import turniplabs.industry.blocks.machines.mv.BlockCutterLaser
+import turniplabs.industry.blocks.machines.mv.BlockMaceratorRotary
+import turniplabs.industry.blocks.machines.solar.*
 import turniplabs.industry.gui.*
+import turniplabs.industry.gui.batbox.*
+import turniplabs.industry.gui.lv.*
+import turniplabs.industry.gui.mv.*
+import turniplabs.industry.gui.solar.*
 
 object IndustryBlocks {
 
@@ -165,7 +193,7 @@ object IndustryBlocks {
         .setWestTexture("machine_casing_basic.png")
         .setBlockSound(BlockSounds.METAL)
         .setHardness(5.0f)
-        .setResistance(10.0f)
+        .setResistance(0.0f)
 
     private val machineBuilderBlank = BlockBuilder(Industry2.MOD_ID)
         .setBlockSound(BlockSounds.METAL)
@@ -294,6 +322,31 @@ object IndustryBlocks {
         .setNorthTexture("machine_compressor.png")
         .build(BlockRecycler("machine.recycler", nextBlockID(), Material.metal))
 
+    val machineCannery: Block = machineBuilder
+        .setNorthTexture("machine_cannery.png")
+        .build(BlockCannery("machine.cannery", nextBlockID(), Material.metal))
+
+    private val advancedMachineBuilder = BlockBuilder(Industry2.MOD_ID)
+        .setTopBottomTexture("machine_casing_advanced.png")
+        .setEastTexture("machine_casing_advanced.png")
+        .setSouthTexture("machine_casing_advanced.png")
+        .setWestTexture("machine_casing_advanced.png")
+        .setBlockSound(BlockSounds.METAL)
+        .setHardness(5.0f)
+        .setResistance(0.0f)
+
+    val advancedMachineMacerator: Block = advancedMachineBuilder
+        .setNorthTexture("advanced_machine_macerator.png")
+        .build(BlockMaceratorRotary("advanced.macerator", nextBlockID(), Material.metal))
+
+    val advancedMachineCompressor: Block = advancedMachineBuilder
+        .setNorthTexture("advanced_machine_compressor.png")
+        .build(BlockCompressorSingularity("advanced.compressor", nextBlockID(), Material.metal))
+
+    val advancedMachineCutter: Block = advancedMachineBuilder
+        .setNorthTexture("advanced_machine_cutter.png")
+        .build(BlockCutterLaser("advanced.cutter", nextBlockID(), Material.metal))
+
     // Miscellaneous
     val hardenedCoal: Block = BlockBuilder(Industry2.MOD_ID)
         .setTextures("hardened_coal.png")
@@ -367,6 +420,10 @@ object IndustryBlocks {
         EnergyAPI.addToNameGuiMap("Cutter", GuiCutter::class.java, TileEntityCutter::class.java, ContainerCutter::class.java)
         EnergyAPI.addToNameGuiMap("Extractor", GuiExtractor::class.java, TileEntityExtractor::class.java, ContainerExtractor::class.java)
         EnergyAPI.addToNameGuiMap("Recycler", GuiRecycler::class.java, TileEntityRecycler::class.java, ContainerRecycler::class.java)
+        EnergyAPI.addToNameGuiMap("Cannery", GuiCannery::class.java, TileEntityCannery::class.java, ContainerCannery::class.java)
+        EnergyAPI.addToNameGuiMap("RotaryMacerator", GuiMaceratorRotary::class.java, TileEntityMaceratorRotary::class.java, ContainerMaceratorRotary::class.java)
+        EnergyAPI.addToNameGuiMap("SingularityCompressor", GuiCompressorSingularity::class.java, TileEntityCompressorSingularity::class.java, ContainerCompressorSingularity::class.java)
+        EnergyAPI.addToNameGuiMap("LaserCutter", GuiCutterLaser::class.java, TileEntityCutterLaser::class.java, ContainerCutterLaser::class.java)
     }
 
     private fun createTileEntities() {
@@ -390,6 +447,10 @@ object IndustryBlocks {
         EntityHelper.createTileEntity(TileEntityCutter::class.java, "Cutter")
         EntityHelper.createTileEntity(TileEntityExtractor::class.java, "Extractor")
         EntityHelper.createTileEntity(TileEntityRecycler::class.java, "Recycler")
+        EntityHelper.createTileEntity(TileEntityCannery::class.java, "Cannery")
+        EntityHelper.createTileEntity(TileEntityMaceratorRotary::class.java, "RotaryMacerator")
+        EntityHelper.createTileEntity(TileEntityCompressorSingularity::class.java, "SingularityCompressor")
+        EntityHelper.createTileEntity(TileEntityCutterLaser::class.java, "LaserCutter")
     }
 
     fun initializeBlocks() {
@@ -441,6 +502,10 @@ object IndustryBlocks {
         machineCutter
         machineExtractor
         machineRecycler
+        machineCannery
+        advancedMachineMacerator
+        advancedMachineCompressor
+        advancedMachineCutter
 
         hardenedCoal
         rubberLeaves

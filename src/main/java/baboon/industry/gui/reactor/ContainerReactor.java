@@ -17,7 +17,7 @@ public class ContainerReactor extends ContainerEnergy {
 
     public ContainerReactor(InventoryPlayer inventory, TileEntityReactor tileEntity) {
         tile = tileEntity;
-        int numberOfRows = tileEntity.getSizeInventory()/9;
+        int numberOfRows = tileEntity.chamberCount;
         int rowInt = numberOfRows * 18;
 
         for(int reactorRowsY = 0; reactorRowsY < numberOfRows; ++reactorRowsY)

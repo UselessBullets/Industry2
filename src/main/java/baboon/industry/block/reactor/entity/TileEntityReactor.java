@@ -13,11 +13,10 @@ import sunsetsatellite.energyapi.impl.TileEntityEnergyConductor;
 import sunsetsatellite.sunsetutils.util.Connection;
 import sunsetsatellite.sunsetutils.util.Direction;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class TileEntityReactor extends TileEntityEnergyConductor implements IInventory {
-    public IInventory inventory = new InventoryReactor(new ArrayList<>());
+    public IInventory inventory;
     public int chamberCount = 0;
     private int uraniumCell = 0;
     private int coolantCell = 0;
@@ -34,26 +33,35 @@ public class TileEntityReactor extends TileEntityEnergyConductor implements IInv
         for (sunsetsatellite.sunsetutils.util.Direction dir : Direction.values())
             setConnection(dir, Connection.OUTPUT);
     }
+    public void getInventory(){
+        checkSides();
+        if (inventory == null || inventory.getSizeInventory() != 9*chamberCount){
+            inventory = BlockReactor.getInventory(worldObj, xCoord, yCoord, zCoord);
+        }
+    }
 
     @Override
     public int getSizeInventory() {
+        getInventory();
         return inventory.getSizeInventory();
     }
 
     @Override
     public ItemStack getStackInSlot(int i) {
+        getInventory();
         return inventory.getStackInSlot(i);
     }
 
     @Override
     public ItemStack decrStackSize(int i, int j) {
+        getInventory();
         return inventory.decrStackSize(i, j);
     }
 
     @Override
     public void setInventorySlotContents(int i, ItemStack itemStack) {
-        inventory.setInventorySlotContents(i, itemStack
-        );
+        getInventory();
+        inventory.setInventorySlotContents(i, itemStack);
     }
 
     @Override
@@ -147,9 +155,7 @@ public class TileEntityReactor extends TileEntityEnergyConductor implements IInv
             return;
         }
 
-        checkSides();
-        if (getSizeInventory() != chamberCount * 9)
-            inventory = BlockReactor.getInventory(worldObj, xCoord,yCoord,zCoord);
+        getInventory();
 
         uraniumTimer++;
         coolantTimer++;

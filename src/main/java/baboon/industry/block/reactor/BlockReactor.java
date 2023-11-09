@@ -1,16 +1,21 @@
 package baboon.industry.block.reactor;
 
+import baboon.industry.block.IndustryBlocks;
+import baboon.industry.block.reactor.entity.InventoryReactor;
 import baboon.industry.block.reactor.entity.TileEntityReactor;
 import net.minecraft.core.block.BlockTileEntity;
 import net.minecraft.core.block.entity.TileEntity;
-import net.minecraft.core.block.entity.TileEntityDispenser;
 import net.minecraft.core.block.material.Material;
 import net.minecraft.core.entity.EntityItem;
 import net.minecraft.core.entity.player.EntityPlayer;
 import net.minecraft.core.item.ItemStack;
+import net.minecraft.core.player.inventory.IInventory;
+import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
 import sunsetsatellite.energyapi.interfaces.mixins.IEntityPlayer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class BlockReactor extends BlockTileEntity {
@@ -59,5 +64,17 @@ public class BlockReactor extends BlockTileEntity {
             }
         }
         super.onBlockRemoval(world, x, y, z);
+    }
+    public static IInventory getInventory(World world, int x, int y, int z) {
+        List<IInventory> chamberInventories = new ArrayList<>();
+        Side[] sides = new Side[]{Side.NORTH, Side.SOUTH, Side.EAST, Side.WEST, Side.BOTTOM, Side.TOP};
+        for (Side side : sides) {
+            int xSearch = x + side.getOffsetX();
+            int ySearch = y + side.getOffsetY();
+            int zSearch = z + side.getOffsetZ();
+            if (world.getBlockId(xSearch, ySearch, zSearch) == IndustryBlocks.nuclearChamber.id)
+                chamberInventories.add((IInventory) world.getBlockTileEntity(xSearch, ySearch, zSearch));
+        }
+        return new InventoryReactor(chamberInventories);
     }
 }

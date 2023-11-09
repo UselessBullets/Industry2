@@ -15,6 +15,7 @@ import baboon.industry.block.machines.endgame.entity.TileEntityEnergyFabricator;
 import baboon.industry.block.reactor.BlockReactor;
 import baboon.industry.block.reactor.BlockReactorChamber;
 import baboon.industry.block.reactor.entity.TileEntityReactor;
+import baboon.industry.block.reactor.entity.TileEntityReactorChamber;
 import baboon.industry.block.storage.*;
 import baboon.industry.block.storage.entity.*;
 import baboon.industry.gui.generator.*;
@@ -216,6 +217,7 @@ public class IndustryBlocks {
         EntityHelper.createTileEntity(TileEntityAdvancedWiremill.class, "IndustryAdvancedWiremill");
         EntityHelper.createTileEntity(TIleEntityAdvancedExtractor.class, "IndustryAdvancedExtractor");
         EntityHelper.createTileEntity(TileEntityReactor.class, "IndustryReactor");
+        EntityHelper.createTileEntity(TileEntityReactorChamber.class, "IndustryReactorChamber");
         EntityHelper.createTileEntity(TileEntityEnergyFabricator.class, "IndustryFabricator");
     }
 

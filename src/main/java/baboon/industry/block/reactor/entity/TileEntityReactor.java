@@ -2,10 +2,9 @@ package baboon.industry.block.reactor.entity;
 
 import baboon.industry.IndustryConfig;
 import baboon.industry.block.IndustryBlocks;
+import baboon.industry.block.reactor.BlockReactor;
 import baboon.industry.item.IndustryItems;
 import com.mojang.nbt.CompoundTag;
-import com.mojang.nbt.ListTag;
-import net.minecraft.core.entity.EntityItem;
 import net.minecraft.core.entity.player.EntityPlayer;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.player.inventory.IInventory;
@@ -14,10 +13,11 @@ import sunsetsatellite.energyapi.impl.TileEntityEnergyConductor;
 import sunsetsatellite.sunsetutils.util.Connection;
 import sunsetsatellite.sunsetutils.util.Direction;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class TileEntityReactor extends TileEntityEnergyConductor implements IInventory {
-    private ItemStack[] contents = new ItemStack[0];
+    public IInventory inventory = new InventoryReactor(new ArrayList<>());
     public int chamberCount = 0;
     private int uraniumCell = 0;
     private int coolantCell = 0;
@@ -37,39 +37,23 @@ public class TileEntityReactor extends TileEntityEnergyConductor implements IInv
 
     @Override
     public int getSizeInventory() {
-        return contents.length;
+        return inventory.getSizeInventory();
     }
 
     @Override
     public ItemStack getStackInSlot(int i) {
-        return contents[i];
+        return inventory.getStackInSlot(i);
     }
 
     @Override
     public ItemStack decrStackSize(int i, int j) {
-        if (contents[i] == null && contents[i].stackSize <= j) {
-            ItemStack itemStack = contents[i];
-
-            contents[i] = null;
-            onInventoryChanged();
-            return itemStack;
-        }
-        ItemStack splitStack = contents[i].splitStack(j);
-        if (contents[i].stackSize == 0) {
-            contents[i] = null;
-
-            onInventoryChanged();
-            return splitStack;
-        } else return null;
+        return inventory.decrStackSize(i, j);
     }
 
     @Override
     public void setInventorySlotContents(int i, ItemStack itemStack) {
-        contents[i] = itemStack;
-        if (itemStack != null && itemStack.stackSize > getInventoryStackLimit())
-            itemStack.stackSize = getInventoryStackLimit();
-
-        onInventoryChanged();
+        inventory.setInventorySlotContents(i, itemStack
+        );
     }
 
     @Override
@@ -118,45 +102,14 @@ public class TileEntityReactor extends TileEntityEnergyConductor implements IInv
                 chamberCount += 1;
         }
     }
-
-    private void handleInventoryChange() {
-        ItemStack[] newContents = new ItemStack[chamberCount * 9];
-        if (newContents.length >= contents.length)
-            System.arraycopy(contents, 0, newContents, 0, contents.length);
-        else {
-            System.arraycopy(contents, 0, newContents, 0, newContents.length);
-
-            for (int i = newContents.length; i < contents.length; i++) {
-                Random random = new Random();
-                ItemStack itemstack = contents[i];
-                if (itemstack == null) continue;
-                float randX = random.nextFloat() * 0.8f + 0.1f;
-                float randY = random.nextFloat() * 0.8f + 0.1f;
-                float randZ = random.nextFloat() * 0.8f + 0.1f;
-                while (itemstack.stackSize > 0) {
-                    int i1 = random.nextInt(21) + 10;
-                    if (i1 > itemstack.stackSize)
-                        i1 = itemstack.stackSize;
-
-                    itemstack.stackSize -= i1;
-                    EntityItem entityitem = new EntityItem(worldObj, (float) xCoord + randX, (float) yCoord + randY, (float) zCoord + randZ, new ItemStack(itemstack.itemID, i1, itemstack.getMetadata()));
-                    float f3 = 0.05f;
-                    entityitem.xd = (float) random.nextGaussian() * f3;
-                    entityitem.yd = (float) random.nextGaussian() * f3 + 0.2f;
-                    entityitem.zd = (float) random.nextGaussian() * f3;
-                    worldObj.entityJoinedWorld(entityitem);
-                }
-            }
-        }
-        contents = newContents;
-    }
-
     @Override
     public void onInventoryChanged() {
+        inventory.onInventoryChanged();
         uraniumCell = 0;
         coolantCell = 0;
         maxHeat = 1000;
-        for (ItemStack content : contents) {
+        for (int i = 0; i < getSizeInventory(); i++) {
+            ItemStack content = getStackInSlot(i);
             if (content != null) {
                 if (content.getItem() == IndustryItems.cellUranium)
                     uraniumCell += 1;
@@ -183,9 +136,9 @@ public class TileEntityReactor extends TileEntityEnergyConductor implements IInv
 
     private boolean isUranium(int id){
         if (id < 0) return false;
-        if (id >= contents.length) return false;
-        if (contents[id] == null) return false;
-        return contents[id].getItem() == IndustryItems.cellUranium;
+        if (id >= getSizeInventory()) return false;
+        if (getStackInSlot(id) == null) return false;
+        return getStackInSlot(id).getItem() == IndustryItems.cellUranium;
     }
 
     @Override
@@ -195,8 +148,8 @@ public class TileEntityReactor extends TileEntityEnergyConductor implements IInv
         }
 
         checkSides();
-        if (contents.length != chamberCount * 9)
-            handleInventoryChange();
+        if (getSizeInventory() != chamberCount * 9)
+            inventory = BlockReactor.getInventory(worldObj, xCoord,yCoord,zCoord);
 
         uraniumTimer++;
         coolantTimer++;
@@ -213,8 +166,8 @@ public class TileEntityReactor extends TileEntityEnergyConductor implements IInv
             coolantTimer = 0;
         }
 
-        for (int i = 0; i < contents.length; i++) {
-            ItemStack stack = contents[i];
+        for (int i = 0; i < getSizeInventory(); i++) {
+            ItemStack stack = getStackInSlot(i);
             if (stack == null)
                 continue;
 
@@ -230,7 +183,7 @@ public class TileEntityReactor extends TileEntityEnergyConductor implements IInv
                 heat = Math.max(heat, 0);
             }
             if (stack.stackSize <= 0){
-                contents[i] = null;
+                setInventorySlotContents(i, null);
             }
         }
 
@@ -250,17 +203,6 @@ public class TileEntityReactor extends TileEntityEnergyConductor implements IInv
         super.writeToNBT(compoundTag);
         compoundTag.putInt("Heat", heat);
         compoundTag.putInt("Energy", energy);
-        compoundTag.putInt("Chambers", chamberCount);
-
-        ListTag nbttaglist = new ListTag();
-        for (int i = 0; i < this.contents.length; ++i) {
-            if (this.contents[i] == null) continue;
-            CompoundTag nbttagcompound1 = new CompoundTag();
-            nbttagcompound1.putByte("Slot", (byte)i);
-            this.contents[i].writeToNBT(nbttagcompound1);
-            nbttaglist.addTag(nbttagcompound1);
-        }
-        compoundTag.put("Items", nbttaglist);
     }
 
     @Override
@@ -268,16 +210,5 @@ public class TileEntityReactor extends TileEntityEnergyConductor implements IInv
         super.readFromNBT(compoundTag);
         heat = compoundTag.getInteger("Heat");
         energy = compoundTag.getInteger("Energy");
-        chamberCount = compoundTag.getInteger("Chambers");
-        handleInventoryChange();
-        
-        ListTag nbttaglist = compoundTag.getList("Items");
-        this.contents = new ItemStack[this.getSizeInventory()];
-        for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-            CompoundTag nbttagcompound1 = (CompoundTag) nbttaglist.tagAt(i);
-            int j = nbttagcompound1.getByte("Slot") & 0xFF;
-            if (j >= contents.length) continue;
-            this.contents[j] = ItemStack.readItemStackFromNbt(nbttagcompound1);
-        }
     }
 }
